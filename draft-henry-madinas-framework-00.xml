@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!-- This template is for creating an Internet Draft using xml2rfc,
     which is available here: http://xml.resource.org. -->
-<!DOCTYPE rfc SYSTEM "rfc2629-xhtml.ent">
+<!DOCTYPE rfc SYSTEM "rfc2629-xhtml.ent"[
+<!ENTITY RFC4941 SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4941.xml">
+<!ENTITY RFC7217 SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7217.xml">
+<!ENTITY RFC5176 SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5176.xml">
+]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
 <!-- For a complete list and description of processing instructions (PIs),
@@ -9,7 +13,7 @@
 <rfc
       xmlns:xi="http://www.w3.org/2001/XInclude"
       category="info"
-      docName="draft-henry-madinas-problem-statement-00"
+      docName="draft-henry-madinas-framework-00"
       ipr="trust200902"
       obsoletes=""
       updates=""
@@ -33,8 +37,8 @@
     <!-- The abbreviated title is used in the page header - it is only necessary if the
         full title is longer than 39 characters -->
 
-   <title abbrev="Abbreviated Title">Problem Statements for MAC Address Randomization</title>
-    <seriesInfo name="Internet-Draft" value="draft-lee-randomized-macaddr-ps-00"/>
+   <title abbrev="RCM Framework">Randomized and Changing MAC Address Framework</title>
+    <seriesInfo name="Internet-Draft" value="draft-henry-madinas-framework-00"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
    <!-- Another author who claims to be an editor -->
@@ -43,6 +47,7 @@
        <organization>Cisco Systems</organization>
        <address>
          <postal>
+          <country>USA</country>
          </postal>
          <email>jerhenry@cisco.com</email>
          <!-- uri and facsimile elements may also be added -->
@@ -107,7 +112,7 @@
       to deduce information about what the user is doing, without the user consent.</t>
 
       <t>To reduce the risks of correlation between a device activity and its owner, multiple 
-      vendors have started to implement Rotating and Changing Mac address (RCM). With this 
+      vendors have started to implement Randomized and Changing Mac address (RCM). With this 
       scheme, and end-device implements a different RCM over time when exchanging traffic 
       over a wireless network. By randomizing the change, the association between a given 
       traffic flow and a single device is made more difficult.</t>
@@ -214,7 +219,7 @@
 
     <section numbered="true" toc="default">
       <name>The Actors: Network Functional Entities and Human Entities</name>
-      <t>The risk of service disruption is therefore weighted against the privacy benefits. However, the plurality 
+      <t>The risk of service disruption is thus weighted against the privacy benefits. However, the plurality 
       of actors involved in the exchanges tends to blurry the boundaries of what privacy should be 
       protected against. It might therefore be useful to list the actors to the network exchanges. 
       Some actors are functional entities, some others are humans (or related) entities.</t>
@@ -245,16 +250,16 @@
         exhaustive. Multiple services are defined for 802.3 networks, and multiple services defined by the IEEE 
         802.1 working group are also applicable to 802.3 networks. Wireless access points may also connect to 
         other mediums than 802.3, which also implements mechanism under the umbrella of the general 802 Standard, 
-        and therefore implement Layer 2 technologies and expect the unique association of a MAC address to a device.</t>
+        and therefore expect the unique association of a MAC address to a device.</t>
 
         <t>Network devices operating at upper layers: some network devices provide functions and services 
         above the MAC layer. Some of them also operate a MAC layer function: for example, routers provide 
         IP routing services, but rely on the device MAC address to create the appropriate frame structure. 
-        Other devices and services operate at upper layers, but also rely on the 802 MAC layer principle of 
-        MAC-to-device unique mapping. For example, DHCPv4 services commonly provide a single IP address per MAC 
-        address (do not assign more than one IPv4 address per MAC address, and assign a new IPv4 address to each 
+        Other devices and services operate at upper layers, but also rely on the 802 principle of unique 
+        MAC-to-device mapping. For example, DHCPv4 services commonly provide a single IP address per MAC 
+        address (they do not assign more than one IPv4 address per MAC address, and assign a new IPv4 address to each 
         new requesting MAC address). ARP and reverse-ARP services commonly expect that, once an IP-to-MAC mapping 
-        has been establish, this mapping is valid and unlikely to change for the cache lifetime. DHCPv6 services 
+        has been established, this mapping is valid and unlikely to change for the cache lifetime. DHCPv6 services 
         commonly do not assign the same IPv6 address to two different requesting MAC addresses. Hybrid services, 
         such as EoIP, also assume stability of the device-to-MAC-and-IP mapping for the duration of a given session.</t>
       </section>
@@ -295,64 +300,64 @@
         <t>Over the wired external (OTWe) observers: beyond the broadcast domain, frames headers are removed 
         by a routing device, and a new Layer 2 header is added before the frame is transmitted to the next 
         segment. The personal device MAC address is not visible anymore, unless a mechanism copies the MAC 
-        address into a field that can be read while the packet travels onto the next segment (e.g. pre-RFC4941 
-        and pre-RFC 7217 IPv6 addresses built from the MAC address). Therefore, unless this last condition exists, 
+        address into a field that can be read while the packet travels onto the next segment (e.g. pre- <xref target="RFC4941"/> 
+        and pre- <xref target="RFC7217"/> IPv6 addresses built from the MAC address). Therefore, unless this last condition exists, 
         OTWe observers are not able to see the device MAC address.</t>
       </section>
 
 
       <section numbered="true" toc="default">
-        <name>The Environments</name>
+        <name>The Trust and the Environments</name>
         <t>The surface of PII exposures that can drive MAC address randomization depends on the 
         environment where the device operates. Therefore, a device can express an identity (such as a MAC address) 
         that can be stable over time if trust is established, or that can be temporal if an identity is required 
-        for a service in an environment where trust has not been established:</t>
+        for a service in an environment where trust has not been established. Trust is not a binary currency. Thus it is useful to distinguish what trust a personal device may establish with the different entities at play in a L2 domain:</t>
         <ul>
-          <li>There are environments where a device establishes a trust relationship and can share a stable 
+          <li>1. Full trust: there are environments where a personal device establishes a trust relationship and can share a stable 
             device identity with the access network devices (access point and WLC), the services beyond the 
-            access point in the L2 broadcast domain (e.g. DHCP, AAA), and the device has confidence that its 
+            access point in the L2 broadcast domain (e.g. DHCP, AAA). The personal device (or its user) has confidence that its 
             identity is not shared beyond the L2 broadcast domain boundary.</li>
-          <li>In other environments, the device may not be willing to share a stable identity with some 
+          <li>2. Selective trust: in other environments, the device may not be willing to share a stable identity with some 
             elements of the Layer 2 broadcast domain, but may be willing to share a stable identity with other 
             elements. For example, a device may want to change the MAC address it uses to communicate with the 
             access point while maintaining the same IP address across the MAC address rotation (thus expressing 
             a stable identity to the DHCP server). That stable identity may or may not be the same for different 
             services.</li>
-          <li>In other environments, the device may not be willing to share any stable identity with any entity 
-            of the Layer 2 broadcast domain, and may express a temporal identity to each of them. That temporal 
+          <li>3. Zero trust: in other environments, the device may not be willing to share any stable identity with any entity 
+            reachable through the Layer 2 broadcast domain, and may express a temporal identity to each of them. That temporal 
             identity may or not be the same for different services.</li>
           </ul>
 
         <t> This trust relationship naturally depends on the relationship between the user of the personal device 
-        and the operator of the service. Thus, it is useful to distinguish several types of environments:</t>
+        and the operator of the service. Thus, it is useful to observ the typical trust structure of common environments:</t>
 
         <ul>
-          <li>Residential settings under the control of the user: this is typical of a home with Wi-Fi and 
+          <li>A. Residential settings under the control of the user: this is typical of a home with Wi-Fi and 
           Internet connection. In this environment, the MAC address activity may be detectable beyond the 
           home walls. However, if traffic is encrypted (e.g. WPA3), some protection for OTA eavesdropping 
           can be assumed. The wire segment within the broadcast domain is under the control of the user, 
-          and is therefore usually not at risk of hosting an eavesdropper. Trust is typically established at 
-          this level. Traffic over the Internet does not expose the MAC address if it is not copied to another 
+          and is therefore usually not at risk of hosting an eavesdropper. Full trust is typically established at 
+	  this level. The device trusts the access point and all L2 domain entities beyond the access point.  Traffic over the Internet does not expose the MAC address if it is not copied to another 
           field before routing happens.</li>
 
-          <li>Managed residential setting: examples of this type of environment include shared living facilities 
+          <li>B. Managed residential settings: examples of this type of environment include shared living facilities 
           and other collective environments where an operator manages the network for the residents. The OTA 
           exposure is similar to that of a home. A number of devices larger than in a standard home may be 
           present, and the operator may be requested to provide IT support to the residents. Therefore, the 
           operator may need to identify a device activity in real time, but may also need to analyze logs so 
           as to understand a past reported issue. For both activities, a device identification associated to the 
-          session is needed. Trust is often established in this environment, at the scale of a series of a few 
+          session is needed. Full trust is often established in this environment, at the scale of a series of a few 
           sessions.</li>
-          <li>Public guest networks: public hotspots, such as in shopping malls, hotels, stores, trains stations 
+          <li>C. Public guest networks: public hotspots, such as in shopping malls, hotels, stores, trains stations 
           and airports are typical of this environment. The guest network operator may be legally mandated to 
           identify devices or users or may have the option to leave all devices and users untracked. In this 
-          environment, trust is commonly not established with any element of the L2 broadcast domain.</li>
-          <li>Enterprises (with BYOD): in this environment, users may be provided corporate devices or 
+          environment, trust is commonly not established with any element of the L2 broadcast domain (Zero trust model by default).</li>
+          <li>D. Enterprises (with BYOD): in this environment, users may be provided corporate devices or 
           may bring their own devices. The devices are not directly under the control of a corporate IT 
-          team. Trust may be established as the device joins the network.</li>
-          <li>Managed enterprises: in this environment, users are typically provided with corporate devices, 
+          team. Trust may be established as the device joins the network. Some enterprise models will mandate Full trust, others, considering the BYOD nature of the device, will allow selective trust.</li>
+          <li>E. Managed enterprises: in this environment, users are typically provided with corporate devices, 
           and all connected devices are managed, for example through a Mobile Device Management (MDM) profile 
-          installed on the device. Trust is created as the MDM profile is installed.</li>
+          installed on the device. Full trust is created as the MDM profile is installed.</li>
         </ul>  
 
     </section>
@@ -374,7 +379,7 @@
         rebuilt, and a new session restarted. The time consumed by this procedure breaks any flow that 
         needs continuity or short delay between packets on the device (e.g. real-time audio, video, 
         AR/VR etc.) The 802.11i Standard recognizes that a device may leave the network and come back 
-        after a short time window. As such, the standard suggest that the infrastructure should keep the 
+        after a short time window. As such, the standard suggests that the infrastructure should keep the 
         context for a device up to one hour after the device was last seen. MAC address rotation in this 
         context can cause resource exhaustion on the wireless infrastructure and the flush of contexts, 
         including for devices that are simply in temporal sleep mode.</t>
@@ -384,7 +389,7 @@
         traffic for a device which port location can no longer be found. As these infrastructure devices 
         also implement a cache (to remember the port position of each known device), frequent MAC rotation 
         can cause resources exhaustion and the flush of older MAC addresses, including for devices that did 
-        not rotate their MAC. For the MAC rotating device, these effects translate into session continuity 
+        not rotate their MAC. For the RCM device, these effects translate into session discontinuity 
         and return traffic losses.</t>
 
         <t>In wireless contexts, 802.1X authenticators rely on the device and user identity validation 
@@ -395,10 +400,10 @@
         interrupt the device traffic, and cause a strain on the AAA server.</t>
 
         <t>DHCP servers, without a unique identification of the device, lose track of which IP address is 
-        validly assigned. Unless the device that rotates the MAC releases the IP address before the rotation 
-        occurs, DHCP servers are at risk of scope exhaustion, causing new devices (or MAC rotating devices) 
-        to fail obtaining a new IP address. Even if the that rotates the MAC releases the IP address before 
-        the rotation occurs, the DHCP server typically holds the releases IP address for a certain duration, 
+        validly assigned. Unless the RCM device releases the IP address before the rotation 
+        occurs, DHCP servers are at risk of scope exhaustion, causing new devices (and RCM devices) 
+        to fail to obtain a new IP address. Even if the RCM device releases the IP address before 
+        the rotation occurs, the DHCP server typically holds the released IP address for a certain duration, 
         in case the leaving MAC would return. As the DHCP server cannot know if the release is due to a 
         temporal disconnection or a MAC rotation, the risk of scope address exhaustion exists even in cases 
         where the IP address is released.</t>
@@ -406,14 +411,14 @@
         <t>Routers keep track of which MAC address is on which interface. MAC rotation can cause MAC 
         address cache exhaustion, but also the need for frequent ARP and inverse ARP exchanges.</t>
 
-        <t>In residential settings (environments type A), policies may be in place to control the 
+        <t>In residential settings (environments type A), policies can be in place to control the 
         traffic of some devices (e.g. parental control). These policies are often based on the device 
-        MAC address. Rotation removes the ability for this control.</t>
+        MAC address. Rotation removes the possibility for such control.</t>
 
         <t>In residential settings (environments type A) and in enterprises (environments types D and E), 
         device recognition and ranging may be used for IoT-related functionalities (door unlock, preferred 
         light and temperature configuration, etc.) These functions often rely on the detection of the 
-        device wireless MAC address. MAC address rotation breaks those services.</t>
+        device wireless MAC address. MAC address rotation breaks the services based o such model.</t>
 
         <t>In managed residential settings (environments types B) and in enterprises (environments types 
         D and E), the network operator is often requested to provide IT support. With 
@@ -425,8 +430,7 @@
 
        <section numbered="true" toc="default">
         <name>Scenario Mapping Table</name>
-        <t>The previous section discuesses different settings that users and network operators have certain
-        expectations. The following table summarizes the expected degree of Trust, Privacy and Network Support</t>
+        <t>The previous section discusses different environements, different settings and the expectations of users and network operators. The following table summarizes the expected degree of Trust, Privacy and Network Support</t>
 
         <table anchor="table_example" align="center">
           <name>Scenario Mapping Table</name>
@@ -434,9 +438,9 @@
             <tr>
               <th align="center">Network Location</th>
               <th align="center">Trust Degree</th>
-              <th align="center">Privacy Degree</th>
-              <th align="center">Network Serivces</th>
-              <th align="center">Network Support Skill Level</th>
+              <th align="center">Privacy Need</th>
+              <th align="center">Network Services</th>
+              <th align="center">Network Support Expectation</th>
             </tr>
           </thead>
           <tbody>
@@ -444,73 +448,76 @@
               <td align="center">Home</td>
               <td align="center">High</td>
               <td align="center">Low</td>
-              <td align="center">Complex</td>
+              <td align="center">Medium</td>
               <td align="center">Low</td>
             </tr>
             <tr>
-              <td align="center">Campus</td>
+              <td align="center">Campus (BYOD)</td>
               <td align="center">Medium</td>
               <td align="center">Medium</td>
               <td align="center">Complex</td>
-              <td align="center">High</td>
+              <td align="center">Medium</td>
             </tr>
             <tr>
-              <td align="center">Enterprise</td>
-              <td align="center">Medium</td>
-              <td align="center">Medium</td>
+              <td align="center">Enterprise (MDM)</td>
+              <td align="center">High</td>
+              <td align="center">Low</td>
               <td align="center">Complex</td>
               <td align="center">High</td>
             </tr>
             <tr>
               <td align="center">Hospitality</td>
               <td align="center">Low</td>
-              <td align="center">Low</td>
-                            <td align="center">Simple</td>
+              <td align="center">High</td>
+              <td align="center">Simple</td>
               <td align="center">Medium</td>
             </tr>
             <tr>
               <td align="center">Public WiFi Access Point</td>
               <td align="center">Low</td>
               <td align="center">Low</td>
-                            <td align="center">Simple</td>
+              <td align="center">Simple</td>
               <td align="center">Low</td>
             </tr>
           </tbody>
         </table>
 
-        <t>For example: Home network is considered to be trusted and safe. User expects simple procedure to connect
-        to home newtork and all devices in the home network are trusted so that privacy isn't a major concern. Also,
-        user may run more than just simple Internet services. Home network can consist of many IoT devices and user
-        expect they will work seamlessly. User also expects the network operator detects and protects the home network
-        if needed (e.g., Parental Control). Most home users are average home users. They do not have deep networking 
-        skill to troubleshoot network protocols.</t>
+        <t>For example: a Home network is considered to be trusted and safe. Users expect a simple procedure to connect
+        to their home newtork. All devices in the home network trust each other. Privacy within the L2 domain is not a major concern.
+        The Home network can also include many IoT devices, which need to be simple to onboard and manage. The home user commonly expects the network operator to protect the home entwork from external threats (attacks from the Internet).
+		The home user also commonly expects simple policy features (e.g., Parental Control). 
+		Most home users do not expect to need networking 
+        skills to manage their home network.</t>
 
-        <t>On the other end of the spectrum to the Home network, Public WiFi Access Point is considered to be
-        untrusted. Privacy is the number one concern. Most users connect to Public WiFi Access Point only require
-        simple Internt connectivity service. This is very different from Home network.</t>
+        <t>On the other end of the spectrum, Public WiFi is often considered to be
+        untrusted. Privacy is the number one concern for the user. Most users connect to Public WiFi Access Point only require
+        simple Internet connectivity service, and expect only limited to no techniqcal support.</t>
 
       </section>
 
 
       <section numbered="true" toc="default">
         <name>Problem Statments</name>
-        <t>The section describes the Problem Statements for MAC-Address Randamization &lt;vspace&gt;: </t>
+        <t>The section describes the Problem Statements for MAC-Address Randomization &lt;vspace&gt;: </t>
 
-        <ol spacing="normal" type="REQ%d">
-          <li>Network must not make any assumption from the MAC address. </li>
-          <li>Rotate MAC address must maintain service continuity. If service is interrupted, there must be
-          a formal machanism to signal the network.</li>
-          <li>Network must provide a secure mechanism to inform the user its identity when the user attempts
-          to connecto the network. Based upon the network identity, user may choose different security setting to
-          join the network.</li>
+        <ol spacing="normal" type="PS%d">
+          <li>Unless trust is established, the network must not make any assumption about client MAC address continuity. </li>
+          <li>MAC address must happen while allowing for service continuity. If a service is interrupted during the RCM process, there must be
+          a formal mechanism for the client and the service to exchange about the interruption.</li>
+  <li>There must be a secure mechanism to inform the device about the type of network the device is connecting to, allowing the user to select the device identity (or identities) accordingly.</li>
         </ol>
 
       </section>
 
       <section numbered="true" toc="default">
-        <name>Problem Solutions</name>
+        <name>Existing Solutions Directions</name>
 
-        <t>In environments of type 1 (settings of type a, b, d and/or e), the device or its user may 
+	      <t>Because the possible network disruptions related to RCM have been envisioned in the past, several 
+        directions have been suggested to alleviate these disruptions. None of them are formal enough to 
+        form a complete solution set. However, it may be useful to list them to provide a general 
+        suggested-solutions context. </t>
+
+      	<t>In environments of type 1 (settings of type a, b, d and/or e), the device or its user may 
         have confidence that over the air eavesdropping does not present a threat. In that case, usage 
         of a fixed MAC address per SSID is a possibility.</t>
 
@@ -523,11 +530,11 @@
 
         <t>In networks implementing 802.1X/EAP, a AAA server may be informed that a device presenting a 
         new MAC address expresses the same device identity as the same device with a previous MAC address. 
-        That AAA server may then inform the access network, for example with a RADIUS RFC 5176 CoA message, 
-        of the unique identity of the device across RCMs.</t>
+        That AAA server may then inform the access network, for example with a RADIUS  
+        <xref target="RFC5176"/> CoA message, of the unique identity of the device across RCMs.</t>
 
         <t>In the cases where the unicity of the station identity is expressed through a protected mean 
-        to the trusted access infrastructure, we recommend that the infrastructure expresses a single MAC 
+        to the trusted access infrastructure, the infrastructure could also express a single MAC 
         address for the device toward the wired part of the network. In such setting, the device first 
         connects to the wireless infrastructure and expresses a stable identity. The wireless infrastructure, 
         acting as a proxy, generates a locally-administered MAC address for the device. That MAC
@@ -543,15 +550,15 @@
         DHCP server. In a multi-link scenario, it may also happen that the device expresses more than one 
         identity to the DHCP server, with connections going through the same wireless infrastructure. Because 
         the device may express a stable identity to one or more network services, because this identity may be 
-        shareable with the wireless infrastructure, we recommend that the wireless infrastructure uses to represent 
-        the device, one of the stable identities expressed by that device. Because different identities can be 
+        shareable with the wireless infrastructure, the wireless infrastructure may use a single MAC to represent 
+        the device, using one of the stable identities expressed by that device. Because different identities can be 
         expressed, and because the role of the wireless infrastructure is not to monitor closely all activities 
-        from the device, we recommend that the wireless infrastructure uses as the device stable identity, the 
+        from the device, the wireless infrastructure could use, as the device stable identity, the 
         stable identity expressed to the wireless infrastructure, if it is available. If such identity is not 
-        available, we recommend that the infrastructure uses the stable identity expressed to the AAA server, 
+        available, the infrastructure could use the stable identity expressed to the AAA server, 
         if it is available and shared back with the wireless infrastructure. If such identity is not available, 
-        we recommend that the wireless infrastructure uses a stable identity expressed to the DHCP server, if 
-        such identity is available and visible to the wireless infrastructure. These recommendations recognize 
+        the wireless infrastructure could use a stable identity expressed to the DHCP server, if 
+        such identity is available and visible to the wireless infrastructure. These possibilities recognize 
         the fact that the wireless infrastructure has visibility into all traversing non-protected traffic. As
         such, the wireless infrastructure may be able to read identifiers sent in unprotected DHCP requests. 
         Additionally, the wireless infrastructure would also see, for example, a device with a new MAC address 
@@ -563,8 +570,8 @@
         device attempting to steal the DHCP identity from another device, mechanisms on the infrastructure 
         may prevent such requests for already assigned resources from being forwarded successfully.</t>
 
-        <t>Thus, in all environments where a device uses a rotating and changing locally-administered MAC 
-        address, we recommend that rotation from one address to the next is preceded by a release of network 
+        <t>In all environments where a device uses a rotating and changing locally-administered MAC 
+        address, rotation from one address to the next could be preceded by a release of network 
         resources, such as open connections closure and DHCP address releases.</t>
 
       </section>
@@ -595,7 +602,6 @@
     1. define an ENTITY at the top, and use "ampersand character"RFC2629; here (as shown)
     2. simply use a PI "less than character"?rfc include="reference.RFC.2119.xml"?> here
        (for I-Ds: include="reference.I-D.narten-iana-considerations-rfc2434bis.xml")
-
     Both are cited textually in the same manner: by using xref elements.
     If you use the PI option, xml2rfc will, by default, try to find included files in the same
     directory as the including file. You can also define the XML_LIBRARY environment variable
@@ -603,15 +609,17 @@
     filing system or remote ones accessed by http (http://domain/dir/... ).-->
 
     <references title="Normative References">
-      <?rfc include="reference.RFC.2119.xml" ?>
-      <?rfc include="reference.RFC.3552.xml" ?>
-      <?rfc include="reference.RFC.5226.xml" ?>
+    <?rfc include="reference.RFC.2119.xml" ?>
+    <?rfc include="reference.RFC.3552.xml" ?>
    </references>
 
    <references title="Informative References">
-     <?rfc include="reference.RFC.7217.xml" ?>
-      <?rfc include="reference.IEEE.802-1D.1993.xml" ?>
-      <?rfc include="reference.IEEE.802.15.4P_2014.xml" ?>
+   	<?rfc include="reference.RFC.5226.xml" ?>
+	  <?rfc include="reference.RFC.4941.xml" ?>
+   	<?rfc include="reference.RFC.5176.xml" ?>
+    <?rfc include="reference.RFC.7217.xml" ?>
+    <?rfc include="reference.IEEE.802-1D.1993.xml" ?>
+    <?rfc include="reference.IEEE.802.15.4P_2014.xml" ?>
    </references>
 
     <section anchor="app-additional" numbered="true" toc="default">
@@ -619,7 +627,6 @@
       <t>This becomes an Appendix.</t>
     </section>
     <!-- Change Log
-
 v00 	2020-09-18	Initial version
 v01	2020-09-XX	Update with edits suggested by JL
     -->
